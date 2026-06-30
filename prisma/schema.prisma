@@ -1,0 +1,100 @@
+// Schema do sistema de orçamentos (produtos/equipamentos médicos).
+// Banco: SQLite em arquivo para desenvolvimento local.
+// Para nuvem, troque o provider para "postgresql" e ajuste a DATABASE_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Dados da própria empresa (emitente). Linha única (id = 1).
+model Empresa {
+  id                 Int      @id @default(1)
+  razaoSocial        String   @default("")
+  nomeFantasia       String   @default("")
+  cnpj               String   @default("")
+  inscricaoEstadual  String   @default("")
+  endereco           String   @default("")
+  cep                String   @default("")
+  cidade             String   @default("")
+  uf                 String   @default("")
+  email              String   @default("")
+  telefone           String   @default("")
+  logoPath           String   @default("")
+  logoAltura         Int      @default(90)
+  // Padrões usados ao criar um novo orçamento
+  condicaoPagamentoPadrao String @default("")
+  prazoEntregaPadrao      String @default("Imediato")
+  validadeDiasPadrao      Int    @default(30)
+  updatedAt          DateTime @updatedAt
+}
+
+/// Empresa cliente (destinatário do orçamento).
+model Cliente {
+  id          Int          @id @default(autoincrement())
+  razaoSocial String
+  cnpj        String       @default("")
+  email       String       @default("")
+  telefone    String       @default("")
+  endereco    String       @default("")
+  cidade      String       @default("")
+  uf          String       @default("")
+  cep         String       @default("")
+  observacao  String       @default("")
+  criadoEm    DateTime     @default(now())
+  orcamentos  Orcamento[]
+}
+
+/// Catálogo de produtos/equipamentos médicos.
+model Produto {
+  id            Int             @id @default(autoincrement())
+  codigo        String          @default("")
+  descricao     String
+  regAnvisa     String          @default("")
+  marca         String          @default("")
+  unidade       String          @default("UN")
+  precoUnitario Float           @default(0)
+  ativo         Boolean         @default(true)
+  criadoEm      DateTime        @default(now())
+  itens         OrcamentoItem[]
+}
+
+/// Orçamento (proposta). Numeração sequencial automática.
+model Orcamento {
+  id                Int             @id @default(autoincrement())
+  numero            Int             @unique
+  data              DateTime        @default(now())
+  clienteId         Int
+  cliente           Cliente         @relation(fields: [clienteId], references: [id])
+  condicaoPagamento String          @default("")
+  prazoEntrega      String          @default("Imediato")
+  validadeProposta  DateTime
+  observacoes       String          @default("")
+  status            String          @default("ABERTO") // ABERTO, ENVIADO, APROVADO, RECUSADO
+  template          String          @default("CLASSICO") // CLASSICO, FISCAL, MODERNO
+  itens             OrcamentoItem[]
+  criadoEm          DateTime        @default(now())
+  atualizadoEm      DateTime        @updatedAt
+}
+
+/// Item de um orçamento. Guarda snapshot dos dados do produto no momento
+/// da emissão, para que o histórico não mude se o produto for editado depois.
+model OrcamentoItem {
+  id            Int       @id @default(autoincrement())
+  orcamentoId   Int
+  orcamento     Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  produtoId     Int?
+  produto       Produto?  @relation(fields: [produtoId], references: [id])
+  codigo        String    @default("")
+  descricao     String
+  regAnvisa     String    @default("")
+  marca         String    @default("")
+  unidade       String    @default("UN")
+  quantidade    Float     @default(1)
+  valorUnitario Float     @default(0)
+  ordem         Int       @default(0)
+}
