@@ -168,7 +168,7 @@ export default function ProdutosManager({ inicial }: { inicial: Produto[] }) {
                     <td className="td font-medium text-slate-800">
                       {p.descricao}
                       {!p.ativo && (
-                        <span className="badge ml-2 bg-slate-100 text-slate-500 ring-1 ring-inset ring-slate-200">
+                        <span className="badge ml-2 bg-slate-100 text-slate-500">
                           inativo
                         </span>
                       )}

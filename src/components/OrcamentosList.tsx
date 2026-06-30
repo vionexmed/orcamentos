@@ -25,10 +25,10 @@ export type OrcamentoLinha = {
 };
 
 const statusCor: Record<string, string> = {
-  ABERTO: "bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200",
-  ENVIADO: "bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-200",
-  APROVADO: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200",
-  RECUSADO: "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200",
+  ABERTO: "bg-slate-100 text-slate-600",
+  ENVIADO: "bg-brand-100 text-brand-700",
+  APROVADO: "bg-emerald-100 text-emerald-700",
+  RECUSADO: "bg-red-100 text-red-700",
 };
 
 export default function OrcamentosList({ inicial }: { inicial: OrcamentoLinha[] }) {
