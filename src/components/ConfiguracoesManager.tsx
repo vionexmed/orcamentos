@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "./PageHeader";
 import ConfiguracoesForm, { type Empresa } from "./ConfiguracoesForm";
+import { IconPlus, IconBuilding } from "./icons";
 
 function empresaEmBranco(): Empresa {
   return {
@@ -89,23 +90,21 @@ export default function ConfiguracoesManager({
         subtitle="Cadastre uma ou mais empresas emitentes — escolha qual usar ao gerar cada orçamento"
       >
         <button type="button" className="btn-primary" onClick={novaEmpresa}>
-          + Nova empresa
+          <IconPlus className="h-4 w-4" />
+          Nova empresa
         </button>
       </PageHeader>
 
       {/* Abas das empresas */}
-      <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+      <div className="mb-6 flex flex-wrap items-center gap-2 border-b border-slate-200 pb-4">
         {empresas.map((e, i) => (
           <button
             key={e.id}
             type="button"
             onClick={() => setSelId(e.id)}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              selId === e.id
-                ? "bg-brand-700 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+            className={`tab ${selId === e.id ? "tab-on" : "tab-off"}`}
           >
+            <IconBuilding className="h-4 w-4" />
             {e.razaoSocial || `Empresa ${i + 1}`}
           </button>
         ))}
@@ -113,22 +112,23 @@ export default function ConfiguracoesManager({
           <button
             type="button"
             onClick={() => setSelId(0)}
-            className={`rounded-md border border-dashed px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`tab border border-dashed ${
               selId === 0
                 ? "border-brand-400 bg-brand-50 text-brand-700"
                 : "border-slate-300 text-slate-500 hover:bg-slate-50"
             }`}
           >
-            • Nova empresa
+            <IconBuilding className="h-4 w-4" />
+            Nova empresa
           </button>
         )}
         <button
           type="button"
           onClick={novaEmpresa}
           title="Adicionar empresa"
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-bold text-slate-500 hover:bg-slate-100"
+          className="btn-icon ring-1 ring-inset ring-slate-200"
         >
-          +
+          <IconPlus className="h-[18px] w-[18px]" />
         </button>
       </div>
 

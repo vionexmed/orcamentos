@@ -7,6 +7,7 @@ import { formatMoeda, parseValorBR } from "@/lib/format";
 import { calcularTotais, STATUS_LABEL, STATUS_OPCOES } from "@/lib/orcamento";
 import EstiloPicker from "./EstiloPicker";
 import { normalizarEstilo, type EstiloId } from "@/lib/estilos";
+import { IconPlus, IconTrash } from "./icons";
 import type { Cliente } from "./ClientesManager";
 import type { Produto } from "./ProdutosManager";
 
@@ -316,7 +317,8 @@ export default function OrcamentoForm({
                   target="_blank"
                   className="btn-secondary whitespace-nowrap"
                 >
-                  + Empresa
+                  <IconPlus className="h-4 w-4" />
+                  Empresa
                 </a>
               </div>
               <p className="mt-1 text-xs text-slate-400">
@@ -340,7 +342,8 @@ export default function OrcamentoForm({
                   ))}
                 </select>
                 <a href="/clientes" target="_blank" className="btn-secondary whitespace-nowrap">
-                  + Cadastrar
+                  <IconPlus className="h-4 w-4" />
+                  Cadastrar
                 </a>
               </div>
             </div>
@@ -470,7 +473,8 @@ export default function OrcamentoForm({
                 ))}
             </select>
             <button type="button" className="btn-secondary" onClick={adicionarAvulso}>
-              + Item avulso
+              <IconPlus className="h-4 w-4" />
+              Item avulso
             </button>
           </div>
         </div>
@@ -560,14 +564,14 @@ export default function OrcamentoForm({
                       <td className="px-2 py-3 text-right tabular-nums text-slate-700">
                         {formatMoeda(total)}
                       </td>
-                      <td className="px-1 py-3 text-right">
+                      <td className="px-1 py-2 text-right">
                         <button
                           type="button"
-                          className="text-red-500 hover:text-red-700"
+                          className="btn-icon btn-icon-danger"
                           onClick={() => removerItem(it.uid)}
                           title="Remover item"
                         >
-                          ✕
+                          <IconTrash className="h-[18px] w-[18px]" />
                         </button>
                       </td>
                     </tr>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { buscarCep } from "@/lib/cep";
 import { estiloLogo, tamanhoPlaceholder } from "@/lib/logo";
+import { IconTrash } from "./icons";
 
 export type Empresa = {
   id: number;
@@ -137,11 +138,12 @@ export default function ConfiguracoesForm({
           {(podeRemover || nova) && (
             <button
               type="button"
-              className="btn-secondary text-red-600"
+              className="btn-danger"
               onClick={remover}
               disabled={removendo}
             >
-              {removendo ? "Excluindo..." : nova ? "Descartar" : "Excluir empresa"}
+              <IconTrash className="h-4 w-4" />
+              {removendo ? "Excluindo..." : nova ? "Descartar" : "Excluir"}
             </button>
           )}
           <button type="submit" className="btn-primary" disabled={salvando}>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PageHeader from "./PageHeader";
 import { formatMoeda, formatNumero } from "@/lib/format";
+import { IconPlus, IconSearch, IconEdit, IconTrash, IconProdutos, IconClose } from "./icons";
 
 export type Produto = {
   id: number;
@@ -117,80 +118,108 @@ export default function ProdutosManager({ inicial }: { inicial: Produto[] }) {
     <div>
       <PageHeader title="Produtos" subtitle="Catálogo de produtos e equipamentos médicos">
         <button className="btn-primary" onClick={abrirNovo}>
-          + Novo produto
+          <IconPlus className="h-4 w-4" />
+          Novo produto
         </button>
       </PageHeader>
 
       <div className="mb-4">
-        <input
-          className="field max-w-sm"
-          placeholder="Buscar por descrição, código, marca ou ANVISA..."
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-        />
+        <div className="relative max-w-sm">
+          <IconSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            className="search"
+            placeholder="Buscar por descrição, código, marca ou ANVISA..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="card overflow-x-auto">
+      <div className="card overflow-hidden">
         {filtrada.length === 0 ? (
-          <p className="p-8 text-center text-sm text-slate-500">
-            Nenhum produto cadastrado ainda.
-          </p>
+          <div className="flex flex-col items-center px-6 py-16 text-center">
+            <div className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <IconProdutos className="h-7 w-7" />
+            </div>
+            <p className="text-sm font-medium text-slate-700">
+              {busca ? "Nenhum produto encontrado." : "Nenhum produto cadastrado ainda."}
+            </p>
+            <p className="mt-1 text-sm text-slate-500">
+              {busca ? "Tente outro termo." : "Monte seu catálogo de produtos e equipamentos."}
+            </p>
+          </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-4 py-3">Código</th>
-                <th className="px-4 py-3">Descrição</th>
-                <th className="px-4 py-3">Reg. ANVISA</th>
-                <th className="px-4 py-3">Marca</th>
-                <th className="px-4 py-3 text-right">Preço</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtrada.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3 text-slate-600">{p.codigo || "—"}</td>
-                  <td className="px-4 py-3 font-medium text-slate-800">
-                    {p.descricao}
-                    {!p.ativo && (
-                      <span className="badge ml-2 bg-slate-100 text-slate-500">
-                        inativo
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-slate-600">{p.regAnvisa || "—"}</td>
-                  <td className="px-4 py-3 text-slate-600">{p.marca || "—"}</td>
-                  <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                    {formatMoeda(p.precoUnitario)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      className="text-brand-600 hover:underline"
-                      onClick={() => abrirEdicao(p)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="ml-4 text-red-600 hover:underline"
-                      onClick={() => excluir(p)}
-                    >
-                      Excluir
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50/80">
+                <tr>
+                  <th className="th">Código</th>
+                  <th className="th">Descrição</th>
+                  <th className="th">Reg. ANVISA</th>
+                  <th className="th">Marca</th>
+                  <th className="th text-right">Preço</th>
+                  <th className="th"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtrada.map((p) => (
+                  <tr key={p.id} className="transition-colors hover:bg-slate-50/70">
+                    <td className="td tabular-nums">{p.codigo || "—"}</td>
+                    <td className="td font-medium text-slate-800">
+                      {p.descricao}
+                      {!p.ativo && (
+                        <span className="badge ml-2 bg-slate-100 text-slate-500 ring-1 ring-inset ring-slate-200">
+                          inativo
+                        </span>
+                      )}
+                    </td>
+                    <td className="td tabular-nums">{p.regAnvisa || "—"}</td>
+                    <td className="td">{p.marca || "—"}</td>
+                    <td className="td text-right font-semibold tabular-nums text-slate-800">
+                      {formatMoeda(p.precoUnitario)}
+                    </td>
+                    <td className="td">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          className="btn-icon"
+                          onClick={() => abrirEdicao(p)}
+                          title="Editar"
+                        >
+                          <IconEdit className="h-[18px] w-[18px]" />
+                        </button>
+                        <button
+                          className="btn-icon btn-icon-danger"
+                          onClick={() => excluir(p)}
+                          title="Excluir"
+                        >
+                          <IconTrash className="h-[18px] w-[18px]" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
       {aberto && (
         <Modal onClose={() => setAberto(false)}>
           <form onSubmit={salvar} className="space-y-4">
-            <h2 className="text-lg font-semibold">
-              {editando ? "Editar produto" : "Novo produto"}
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-brand-900">
+                {editando ? "Editar produto" : "Novo produto"}
+              </h2>
+              <button
+                type="button"
+                className="btn-icon"
+                onClick={() => setAberto(false)}
+                title="Fechar"
+              >
+                <IconClose className="h-5 w-5" />
+              </button>
+            </div>
             {erro && (
               <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
                 {erro}

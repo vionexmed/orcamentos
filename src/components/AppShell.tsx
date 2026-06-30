@@ -2,12 +2,40 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LogoMark,
+  IconOrcamentos,
+  IconClientes,
+  IconProdutos,
+  IconConfig,
+  IconChevron,
+} from "./icons";
 
 const links = [
-  { href: "/", label: "Orçamentos", match: (p: string) => p === "/" || p.startsWith("/orcamentos") },
-  { href: "/clientes", label: "Clientes", match: (p: string) => p.startsWith("/clientes") },
-  { href: "/produtos", label: "Produtos", match: (p: string) => p.startsWith("/produtos") },
-  { href: "/configuracoes", label: "Configurações", match: (p: string) => p.startsWith("/configuracoes") },
+  {
+    href: "/",
+    label: "Orçamentos",
+    Icon: IconOrcamentos,
+    match: (p: string) => p === "/" || p.startsWith("/orcamentos"),
+  },
+  {
+    href: "/clientes",
+    label: "Clientes",
+    Icon: IconClientes,
+    match: (p: string) => p.startsWith("/clientes"),
+  },
+  {
+    href: "/produtos",
+    label: "Produtos",
+    Icon: IconProdutos,
+    match: (p: string) => p.startsWith("/produtos"),
+  },
+  {
+    href: "/configuracoes",
+    label: "Configurações",
+    Icon: IconConfig,
+    match: (p: string) => p.startsWith("/configuracoes"),
+  },
 ];
 
 function breadcrumb(pathname: string): string[] {
@@ -29,57 +57,63 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="no-print">
-        {/* Masthead institucional (navy) */}
-        <header className="bg-brand-700 text-white">
-          <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/10 ring-1 ring-white/25 text-xl">
-              🏛️
-            </span>
-            <div className="min-w-0">
-              <h1 className="text-[17px] font-bold leading-tight tracking-tight">
-                Sistema de Orçamentos
-              </h1>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-brand-200">
-                Gestão de Propostas Comerciais
+        {/* Masthead institucional */}
+        <header className="bg-gradient-to-b from-brand-800 to-brand-900 text-white">
+          <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3.5">
+            <LogoMark className="h-10 w-10 shrink-0 drop-shadow-sm" />
+            <div className="min-w-0 leading-tight">
+              <h1 className="text-[17px] font-semibold tracking-tight">Orçamentos</h1>
+              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-brand-300">
+                Gestão de Propostas
               </p>
             </div>
+            <span className="ml-auto hidden items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-brand-100 ring-1 ring-inset ring-white/15 sm:inline-flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              Online
+            </span>
           </div>
-        </header>
 
-        {/* Barra de menu */}
-        <nav className="bg-brand-800 shadow-sm">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-stretch px-2">
-            {links.map((l) => {
-              const active = l.match(pathname);
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`border-b-[3px] px-4 py-2.5 text-sm font-semibold transition-colors ${
-                    active
-                      ? "border-brand-300 bg-white/10 text-white"
-                      : "border-transparent text-brand-100 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
+          {/* Barra de menu */}
+          <nav className="border-t border-white/10">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-stretch gap-1 px-2">
+              {links.map(({ href, label, Icon, match }) => {
+                const active = match(pathname);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`group relative flex items-center gap-2 px-3.5 py-3 text-sm font-medium transition-colors ${
+                      active ? "text-white" : "text-brand-200 hover:text-white"
+                    }`}
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                    {label}
+                    <span
+                      className={`absolute inset-x-2 -bottom-px h-0.5 rounded-full transition-colors ${
+                        active ? "bg-white" : "bg-transparent group-hover:bg-white/30"
+                      }`}
+                    />
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </header>
 
         {/* Breadcrumb */}
         <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-6xl items-center gap-1.5 px-4 py-2 text-xs text-slate-400">
+          <div className="mx-auto flex max-w-6xl items-center gap-1.5 px-4 py-2.5 text-xs text-slate-400">
             {trilha.map((t, i) => (
               <span key={i} className="flex items-center gap-1.5">
-                {i > 0 && <span className="text-slate-300">/</span>}
+                {i > 0 && <IconChevron className="h-3 w-3 text-slate-300" />}
                 {i === 0 ? (
-                  <Link href="/" className="hover:text-brand-700">
+                  <Link href="/" className="transition-colors hover:text-brand-700">
                     {t}
                   </Link>
                 ) : (
-                  <span className={i === trilha.length - 1 ? "font-medium text-slate-600" : ""}>
+                  <span
+                    className={i === trilha.length - 1 ? "font-medium text-slate-600" : ""}
+                  >
                     {t}
                   </span>
                 )}
@@ -90,16 +124,20 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Conteúdo */}
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 print:max-w-none print:px-0 print:py-0">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 print:max-w-none print:px-0 print:py-0">
         {children}
       </main>
 
-      {/* Rodapé institucional (navy) */}
-      <footer className="no-print bg-brand-900 text-brand-200">
-        <div className="mx-auto max-w-6xl px-4 py-5 text-xs leading-relaxed">
-          <p className="text-sm font-semibold text-white">Sistema de Orçamentos</p>
-          <p className="mt-1">Produtos e equipamentos médicos · Documento sem valor fiscal.</p>
-          <p className="mt-2 text-brand-300">© {ano} · Uso interno.</p>
+      {/* Rodapé institucional */}
+      <footer className="no-print border-t border-brand-900/20 bg-brand-900 text-brand-300">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs">
+          <div className="flex items-center gap-2.5">
+            <LogoMark className="h-7 w-7" />
+            <span className="font-medium text-brand-100">Sistema de Orçamentos</span>
+          </div>
+          <p className="text-brand-400">
+            © {ano} · Documento sem valor fiscal · Uso interno
+          </p>
         </div>
       </footer>
     </div>

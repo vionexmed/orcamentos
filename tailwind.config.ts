@@ -5,31 +5,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta institucional azul-escuro (navy) — cara de órgão público,
-        // séria e com presença, sem o azul-claro/amarelo do gov.br.
+        // Paleta institucional azul-escuro (navy) — séria, com presença.
         brand: {
           50: "#eef3fa",
-          100: "#d6e2f2",
-          200: "#aec6e4",
-          300: "#7fa3d2",
-          500: "#2f5996",
-          600: "#1d3f72",
-          700: "#15315a",
-          800: "#0f2546",
-          900: "#0a1a33",
+          100: "#dbe6f4",
+          200: "#bcd0ea",
+          300: "#8fadd5",
+          400: "#5c80b8",
+          500: "#385f9b",
+          600: "#264a80",
+          700: "#1b3866",
+          800: "#152b4f",
+          900: "#101f3a",
+          950: "#0a1428",
         },
       },
       fontFamily: {
         sans: [
+          "var(--font-sans)",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
           "Segoe UI",
           "Roboto",
-          "Helvetica Neue",
-          "Arial",
           "sans-serif",
         ],
+      },
+      boxShadow: {
+        card: "0 1px 2px 0 rgb(16 31 58 / 0.04), 0 1px 3px 0 rgb(16 31 58 / 0.06)",
+        "card-hover":
+          "0 4px 12px -2px rgb(16 31 58 / 0.10), 0 2px 6px -2px rgb(16 31 58 / 0.06)",
       },
     },
   },
