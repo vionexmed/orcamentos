@@ -7,6 +7,7 @@ import {
 } from "@/lib/format";
 import { calcularTotais, STATUS_LABEL } from "@/lib/orcamento";
 import type { DocumentoProps } from "@/lib/estilos";
+import { estiloLogo, tamanhoPlaceholder } from "@/lib/logo";
 
 type Variante = "FISCAL" | "MODERNO";
 
@@ -74,18 +75,21 @@ export default function TemplateBoxed({
       {/* Timbre / cabeçalho oficial — logo à esquerda, dados ao lado.
           A logo se adapta a qualquer proporção (object-contain): nunca é
           cortada nem distorcida, apenas encaixa dentro da área reservada. */}
-      <div className="flex items-center gap-4 px-4 py-4">
+      <div className="flex items-center gap-4 px-4 py-3">
         {empresa.logoPath ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={empresa.logoPath}
             alt="Logo"
-            style={{ maxHeight: empresa.logoAltura }}
-            className="block h-auto w-auto max-w-[320px] shrink-0 object-contain"
+            style={estiloLogo(empresa.logoAltura)}
+            className="block h-auto shrink-0 object-contain object-left"
           />
         ) : (
           <div
-            style={{ height: empresa.logoAltura, width: empresa.logoAltura }}
+            style={{
+              height: tamanhoPlaceholder(empresa.logoAltura),
+              width: tamanhoPlaceholder(empresa.logoAltura),
+            }}
             className="grid shrink-0 place-items-center rounded-full border border-dashed border-slate-300 text-center text-[9px] leading-tight text-slate-400"
           >
             BRASÃO

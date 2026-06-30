@@ -1,6 +1,7 @@
 import { formatData, formatDataHora, formatNumero } from "@/lib/format";
 import { calcularTotais } from "@/lib/orcamento";
 import type { DocumentoProps } from "@/lib/estilos";
+import { estiloLogo } from "@/lib/logo";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -35,8 +36,8 @@ export default function TemplateClassico({ orcamento, empresa }: DocumentoProps)
             <img
               src={empresa.logoPath}
               alt="Logo"
-              style={{ maxHeight: empresa.logoAltura }}
-              className="block max-w-full object-contain"
+              style={estiloLogo(empresa.logoAltura, { maxWidth: "100%" })}
+              className="block object-contain"
             />
           ) : (
             <span className="text-[10px] text-gray-400">[LOGO]</span>

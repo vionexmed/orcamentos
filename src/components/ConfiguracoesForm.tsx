@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { buscarCep } from "@/lib/cep";
+import { estiloLogo, tamanhoPlaceholder } from "@/lib/logo";
 
 export type Empresa = {
   id: number;
@@ -307,8 +308,11 @@ export default function ConfiguracoesForm({
             <div className="mt-4 border-t border-slate-100 pt-4">
               <label className="label flex items-center justify-between">
                 <span>Tamanho da logo no documento</span>
-                <span className="font-normal text-slate-400">{form.logoAltura}px</span>
+                <span className="font-normal text-slate-400">{form.logoAltura}</span>
               </label>
+              <p className="mb-1 text-[10px] text-slate-400">
+                Aumenta a logo na largura, sem esticar a faixa do cabeçalho.
+              </p>
               <input
                 type="range"
                 min={40}
@@ -376,18 +380,21 @@ export default function ConfiguracoesForm({
 
         <div className="mx-auto max-w-[680px] overflow-hidden rounded-md border-2 border-slate-700 bg-white text-slate-900">
           {/* Cabeçalho: logo à esquerda + dados ao lado */}
-          <div className="flex items-center gap-4 px-4 py-4">
+          <div className="flex items-center gap-4 px-4 py-3">
             {form.logoPath ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={form.logoPath}
                 alt="Logo"
-                style={{ maxHeight: form.logoAltura }}
-                className="block h-auto w-auto max-w-[320px] shrink-0 object-contain"
+                style={estiloLogo(form.logoAltura)}
+                className="block h-auto shrink-0 object-contain object-left"
               />
             ) : (
               <div
-                style={{ height: form.logoAltura, width: form.logoAltura }}
+                style={{
+                  height: tamanhoPlaceholder(form.logoAltura),
+                  width: tamanhoPlaceholder(form.logoAltura),
+                }}
                 className="grid shrink-0 place-items-center rounded-full border border-dashed border-slate-300 text-center text-[9px] leading-tight text-slate-400"
               >
                 BRASÃO
