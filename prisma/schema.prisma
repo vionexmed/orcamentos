@@ -1,14 +1,14 @@
 // Schema do sistema de orçamentos (produtos/equipamentos médicos).
-// Banco: SQLite em arquivo para desenvolvimento local.
-// Para nuvem, troque o provider para "postgresql" e ajuste a DATABASE_URL.
+// Banco: PostgreSQL no Supabase (compartilhado entre todos os usuários).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 /// Dados da própria empresa (emitente). Linha única (id = 1).
