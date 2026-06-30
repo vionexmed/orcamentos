@@ -25,6 +25,7 @@ type ItemForm = {
 export type OrcamentoInicial = {
   id: number;
   clienteId: number;
+  empresaId: number | null;
   data: string;
   condicaoPagamento: string;
   prazoEntrega: string;
@@ -44,7 +45,10 @@ export type OrcamentoInicial = {
   }[];
 };
 
-type Defaults = {
+export type EmpresaOpcao = {
+  id: number;
+  razaoSocial: string;
+  nomeFantasia: string;
   condicaoPagamentoPadrao: string;
   prazoEntregaPadrao: string;
   validadeDiasPadrao: number;
@@ -57,26 +61,36 @@ function toDateInput(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+function dataValidade(dias: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + (dias || 30));
+  return toDateInput(d);
+}
+
 export default function OrcamentoForm({
   clientes,
   produtos,
-  defaults,
+  empresas,
   inicial,
 }: {
   clientes: Cliente[];
   produtos: Produto[];
-  defaults: Defaults;
+  empresas: EmpresaOpcao[];
   inicial?: OrcamentoInicial;
 }) {
   const router = useRouter();
   const editando = Boolean(inicial);
 
   const hoje = toDateInput(new Date());
-  const validadePadrao = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + (defaults.validadeDiasPadrao || 30));
-    return toDateInput(d);
-  }, [defaults.validadeDiasPadrao]);
+
+  // Empresa emitente selecionada (primeiro campo). Padrão: a do orçamento (se
+  // estiver editando) ou a primeira empresa cadastrada.
+  const empresaInicial =
+    inicial?.empresaId ?? (empresas.length > 0 ? empresas[0].id : null);
+  const [empresaId, setEmpresaId] = useState<string>(
+    empresaInicial ? String(empresaInicial) : "",
+  );
+  const empresaSel = empresas.find((e) => String(e.id) === empresaId);
 
   const [clienteId, setClienteId] = useState<string>(
     inicial ? String(inicial.clienteId) : "",
@@ -85,13 +99,15 @@ export default function OrcamentoForm({
     inicial ? inicial.data.slice(0, 10) : hoje,
   );
   const [validade, setValidade] = useState<string>(
-    inicial ? inicial.validadeProposta.slice(0, 10) : validadePadrao,
+    inicial
+      ? inicial.validadeProposta.slice(0, 10)
+      : dataValidade(empresaSel?.validadeDiasPadrao ?? 30),
   );
   const [condicaoPagamento, setCondicaoPagamento] = useState<string>(
-    inicial ? inicial.condicaoPagamento : defaults.condicaoPagamentoPadrao,
+    inicial ? inicial.condicaoPagamento : empresaSel?.condicaoPagamentoPadrao ?? "",
   );
   const [prazoEntrega, setPrazoEntrega] = useState<string>(
-    inicial ? inicial.prazoEntrega : defaults.prazoEntregaPadrao,
+    inicial ? inicial.prazoEntrega : empresaSel?.prazoEntregaPadrao ?? "Imediato",
   );
   const [status, setStatus] = useState<string>(inicial?.status ?? "ABERTO");
   const [observacoes, setObservacoes] = useState<string>(
@@ -177,9 +193,25 @@ export default function OrcamentoForm({
     setItens((prev) => prev.filter((it) => it.uid !== uid));
   }
 
+  function trocarEmpresa(idStr: string) {
+    setEmpresaId(idStr);
+    // Em orçamento novo, ao escolher a empresa, já preenche as condições
+    // comerciais com os padrões dela (o usuário ainda pode editar).
+    if (editando) return;
+    const e = empresas.find((x) => String(x.id) === idStr);
+    if (!e) return;
+    setCondicaoPagamento(e.condicaoPagamentoPadrao);
+    setPrazoEntrega(e.prazoEntregaPadrao);
+    setValidade(dataValidade(e.validadeDiasPadrao));
+  }
+
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     setErro("");
+    if (empresas.length > 0 && !empresaId) {
+      setErro("Selecione a empresa emitente.");
+      return;
+    }
     if (!clienteId) {
       setErro("Selecione um cliente.");
       return;
@@ -191,6 +223,7 @@ export default function OrcamentoForm({
     setSalvando(true);
 
     const payload = {
+      empresaId: empresaId ? Number(empresaId) : null,
       clienteId: Number(clienteId),
       data,
       validadeProposta: validade,
@@ -260,6 +293,36 @@ export default function OrcamentoForm({
             Dados do orçamento
           </h2>
           <div className="space-y-4">
+            <div>
+              <label className="label">Empresa emitente *</label>
+              <div className="flex gap-2">
+                <select
+                  className="field"
+                  value={empresaId}
+                  onChange={(e) => trocarEmpresa(e.target.value)}
+                >
+                  {empresas.length === 0 && (
+                    <option value="">Nenhuma empresa cadastrada</option>
+                  )}
+                  {empresas.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.razaoSocial || `Empresa ${emp.id}`}
+                      {emp.nomeFantasia ? ` — ${emp.nomeFantasia}` : ""}
+                    </option>
+                  ))}
+                </select>
+                <a
+                  href="/configuracoes"
+                  target="_blank"
+                  className="btn-secondary whitespace-nowrap"
+                >
+                  + Empresa
+                </a>
+              </div>
+              <p className="mt-1 text-xs text-slate-400">
+                É esta empresa (razão social, logo e dados) que aparece no documento.
+              </p>
+            </div>
             <div>
               <label className="label">Cliente *</label>
               <div className="flex gap-2">

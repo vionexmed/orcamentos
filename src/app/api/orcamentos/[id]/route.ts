@@ -35,6 +35,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       where: { id: orcamentoId },
       data: {
         clienteId: dados.clienteId,
+        empresaId: dados.empresaId,
         ...(dados.data ? { data: dados.data } : {}),
         condicaoPagamento: dados.condicaoPagamento,
         prazoEntrega: dados.prazoEntrega,

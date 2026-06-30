@@ -11,9 +11,10 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-/// Dados da própria empresa (emitente). Linha única (id = 1).
+/// Empresa emitente. O sistema suporta várias empresas; cada orçamento
+/// escolhe qual delas é a emitente.
 model Empresa {
-  id                 Int      @id @default(1)
+  id                 Int      @id @default(autoincrement())
   razaoSocial        String   @default("")
   nomeFantasia       String   @default("")
   cnpj               String   @default("")
@@ -30,7 +31,9 @@ model Empresa {
   condicaoPagamentoPadrao String @default("")
   prazoEntregaPadrao      String @default("Imediato")
   validadeDiasPadrao      Int    @default(30)
+  criadoEm           DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  orcamentos         Orcamento[]
 }
 
 /// Empresa cliente (destinatário do orçamento).
@@ -70,6 +73,8 @@ model Orcamento {
   data              DateTime        @default(now())
   clienteId         Int
   cliente           Cliente         @relation(fields: [clienteId], references: [id])
+  empresaId         Int?
+  empresa           Empresa?        @relation(fields: [empresaId], references: [id])
   condicaoPagamento String          @default("")
   prazoEntrega      String          @default("Imediato")
   validadeProposta  DateTime

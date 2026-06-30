@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { getEmpresa } from "@/lib/empresa";
+import { getEmpresas } from "@/lib/empresa";
 import OrcamentoForm from "@/components/OrcamentoForm";
 
 export const dynamic = "force-dynamic";
@@ -11,10 +11,10 @@ export default async function EditarOrcamentoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [clientes, produtos, empresa, orcamento] = await Promise.all([
+  const [clientes, produtos, empresas, orcamento] = await Promise.all([
     prisma.cliente.findMany({ orderBy: { razaoSocial: "asc" } }),
     prisma.produto.findMany({ orderBy: { descricao: "asc" } }),
-    getEmpresa(),
+    getEmpresas(),
     prisma.orcamento.findUnique({
       where: { id: Number(id) },
       include: { itens: { orderBy: { ordem: "asc" } } },
@@ -27,14 +27,18 @@ export default async function EditarOrcamentoPage({
     <OrcamentoForm
       clientes={clientes}
       produtos={produtos}
-      defaults={{
-        condicaoPagamentoPadrao: empresa.condicaoPagamentoPadrao,
-        prazoEntregaPadrao: empresa.prazoEntregaPadrao,
-        validadeDiasPadrao: empresa.validadeDiasPadrao,
-      }}
+      empresas={empresas.map((e) => ({
+        id: e.id,
+        razaoSocial: e.razaoSocial,
+        nomeFantasia: e.nomeFantasia,
+        condicaoPagamentoPadrao: e.condicaoPagamentoPadrao,
+        prazoEntregaPadrao: e.prazoEntregaPadrao,
+        validadeDiasPadrao: e.validadeDiasPadrao,
+      }))}
       inicial={{
         id: orcamento.id,
         clienteId: orcamento.clienteId,
+        empresaId: orcamento.empresaId,
         data: orcamento.data.toISOString(),
         condicaoPagamento: orcamento.condicaoPagamento,
         prazoEntrega: orcamento.prazoEntrega,

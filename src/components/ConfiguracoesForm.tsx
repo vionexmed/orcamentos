@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import PageHeader from "./PageHeader";
 import { buscarCep } from "@/lib/cep";
 
 export type Empresa = {
+  id: number;
   razaoSocial: string;
   nomeFantasia: string;
   cnpj: string;
@@ -22,13 +22,26 @@ export type Empresa = {
   validadeDiasPadrao: number;
 };
 
-export default function ConfiguracoesForm({ inicial }: { inicial: Empresa }) {
+export default function ConfiguracoesForm({
+  inicial,
+  onSaved,
+  onRemoved,
+  podeRemover,
+}: {
+  inicial: Empresa;
+  onSaved: (empresa: Empresa) => void;
+  onRemoved: (id: number) => void;
+  podeRemover: boolean;
+}) {
   const [form, setForm] = useState<Empresa>(inicial);
   const [salvando, setSalvando] = useState(false);
+  const [removendo, setRemovendo] = useState(false);
   const [enviandoLogo, setEnviandoLogo] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
   const [buscandoCep, setBuscandoCep] = useState(false);
+
+  const nova = form.id <= 0;
 
   function set<K extends keyof Empresa>(campo: K, valor: Empresa[K]) {
     setForm((f) => ({ ...f, [campo]: valor }));
@@ -71,8 +84,10 @@ export default function ConfiguracoesForm({ inicial }: { inicial: Empresa }) {
     setSalvando(true);
     setErro("");
     setMensagem("");
-    const res = await fetch("/api/empresa", {
-      method: "PUT",
+    const url = nova ? "/api/empresa" : `/api/empresa/${form.id}`;
+    const method = nova ? "POST" : "PUT";
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
@@ -82,19 +97,57 @@ export default function ConfiguracoesForm({ inicial }: { inicial: Empresa }) {
       setErro(data.error ?? "Erro ao salvar.");
       return;
     }
+    const salva: Empresa = await res.json();
+    setForm(salva);
+    onSaved(salva);
     setMensagem("Dados salvos com sucesso.");
+  }
+
+  async function remover() {
+    if (nova) {
+      onRemoved(form.id);
+      return;
+    }
+    if (!confirm("Excluir esta empresa? Essa ação não pode ser desfeita.")) return;
+    setRemovendo(true);
+    setErro("");
+    const res = await fetch(`/api/empresa/${form.id}`, { method: "DELETE" });
+    setRemovendo(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setErro(data.error ?? "Erro ao excluir.");
+      return;
+    }
+    onRemoved(form.id);
   }
 
   return (
     <form onSubmit={salvar}>
-      <PageHeader
-        title="Configurações da empresa"
-        subtitle="Estes dados e a logo aparecem no cabeçalho dos orçamentos"
-      >
-        <button type="submit" className="btn-primary" disabled={salvando}>
-          {salvando ? "Salvando..." : "Salvar"}
-        </button>
-      </PageHeader>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-base font-bold text-slate-800">
+            {form.razaoSocial || (nova ? "Nova empresa" : `Empresa ${form.id}`)}
+          </h2>
+          <p className="text-sm text-slate-500">
+            Estes dados e a logo aparecem no documento do orçamento.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {(podeRemover || nova) && (
+            <button
+              type="button"
+              className="btn-secondary text-red-600"
+              onClick={remover}
+              disabled={removendo}
+            >
+              {removendo ? "Excluindo..." : nova ? "Descartar" : "Excluir empresa"}
+            </button>
+          )}
+          <button type="submit" className="btn-primary" disabled={salvando}>
+            {salvando ? "Salvando..." : nova ? "Criar empresa" : "Salvar"}
+          </button>
+        </div>
+      </div>
 
       {erro && (
         <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -249,7 +302,7 @@ export default function ConfiguracoesForm({ inicial }: { inicial: Empresa }) {
                 Remover logo
               </button>
             )}
-            <p className="mt-2 text-xs text-slate-400">PNG, JPG, WEBP ou SVG (máx. 4 MB).</p>
+            <p className="mt-2 text-xs text-slate-400">PNG, JPG, WEBP ou SVG (máx. 2 MB).</p>
 
             <div className="mt-4 border-t border-slate-100 pt-4">
               <label className="label flex items-center justify-between">

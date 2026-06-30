@@ -1,8 +1,16 @@
 import { prisma } from "./db";
 
-/** Retorna a (única) linha de Empresa, criando-a vazia se ainda não existir. */
-export async function getEmpresa() {
-  const existente = await prisma.empresa.findUnique({ where: { id: 1 } });
-  if (existente) return existente;
-  return prisma.empresa.create({ data: { id: 1 } });
+/** Lista todas as empresas emitentes cadastradas (mais recentes por último). */
+export async function getEmpresas() {
+  return prisma.empresa.findMany({ orderBy: { id: "asc" } });
+}
+
+/**
+ * Retorna a empresa "padrão" (a primeira cadastrada). Se nenhuma existir,
+ * cria uma vazia para que as telas de configuração tenham o que editar.
+ */
+export async function getEmpresaPadrao() {
+  const primeira = await prisma.empresa.findFirst({ orderBy: { id: "asc" } });
+  if (primeira) return primeira;
+  return prisma.empresa.create({ data: {} });
 }

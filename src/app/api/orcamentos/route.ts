@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       data: {
         numero,
         clienteId: dados.clienteId,
+        empresaId: dados.empresaId,
         ...(dados.data ? { data: dados.data } : {}),
         condicaoPagamento: dados.condicaoPagamento,
         prazoEntrega: dados.prazoEntrega,

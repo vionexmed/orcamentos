@@ -5,13 +5,12 @@ const prisma = new PrismaClient();
 // Dados de exemplo (baseados no modelo enviado) só para testar rapidamente.
 // Você pode editar tudo em Configurações / Clientes / Produtos.
 async function main() {
-  // Empresa (emitente) de exemplo. Esses dados aparecem apenas no documento
-  // do orçamento (o restante do sistema é neutro). Edite em Configurações.
-  const empresa = await prisma.empresa.findUnique({ where: { id: 1 } });
+  // Empresa (emitente) de exemplo. O sistema suporta várias empresas; esta é
+  // criada só se nenhuma existir. Edite/adicione em Configurações.
+  let empresa = await prisma.empresa.findFirst({ orderBy: { id: "asc" } });
   if (!empresa) {
-    await prisma.empresa.create({
+    empresa = await prisma.empresa.create({
       data: {
-        id: 1,
         razaoSocial: "EFFORT PRODUTOS PARA A SAÚDE LTDA",
         nomeFantasia: "EFFORT Produtos Hospitalares",
         cnpj: "37.323.224/0001-44",
@@ -71,6 +70,7 @@ async function main() {
       data: {
         numero: 113,
         clienteId,
+        empresaId: empresa.id,
         condicaoPagamento: "027 - 10 x",
         prazoEntrega: "Imediato",
         validadeProposta: validade,

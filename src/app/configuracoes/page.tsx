@@ -1,9 +1,9 @@
-import { getEmpresa } from "@/lib/empresa";
-import ConfiguracoesForm from "@/components/ConfiguracoesForm";
+import { getEmpresas } from "@/lib/empresa";
+import ConfiguracoesManager from "@/components/ConfiguracoesManager";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConfiguracoesPage() {
-  const empresa = await getEmpresa();
-  return <ConfiguracoesForm inicial={empresa} />;
+  const empresas = await getEmpresas();
+  return <ConfiguracoesManager empresasIniciais={empresas} />;
 }

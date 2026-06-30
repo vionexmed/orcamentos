@@ -40,6 +40,7 @@ export function normalizarItens(itensRaw: unknown): ItemPayload[] {
 
 export type OrcamentoPayload = {
   clienteId: number;
+  empresaId: number | null;
   data?: Date;
   condicaoPagamento: string;
   prazoEntrega: string;
@@ -61,6 +62,10 @@ export function validarOrcamento(body: Record<string, unknown>): ValidacaoResult
     return { ok: false, erro: "Selecione um cliente." };
   }
 
+  const empresaIdRaw = Number(body.empresaId);
+  const empresaId =
+    empresaIdRaw && Number.isFinite(empresaIdRaw) ? empresaIdRaw : null;
+
   const itens = normalizarItens(body.itens);
   if (itens.length === 0) {
     return { ok: false, erro: "Adicione ao menos um item ao orçamento." };
@@ -78,6 +83,7 @@ export function validarOrcamento(body: Record<string, unknown>): ValidacaoResult
     ok: true,
     dados: {
       clienteId,
+      empresaId,
       data: data && !Number.isNaN(data.getTime()) ? data : undefined,
       condicaoPagamento: String(body.condicaoPagamento ?? ""),
       prazoEntrega: String(body.prazoEntrega ?? "Imediato"),

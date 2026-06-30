@@ -1,25 +1,28 @@
 import { prisma } from "@/lib/db";
-import { getEmpresa } from "@/lib/empresa";
+import { getEmpresas } from "@/lib/empresa";
 import OrcamentoForm from "@/components/OrcamentoForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function NovoOrcamentoPage() {
-  const [clientes, produtos, empresa] = await Promise.all([
+  const [clientes, produtos, empresas] = await Promise.all([
     prisma.cliente.findMany({ orderBy: { razaoSocial: "asc" } }),
     prisma.produto.findMany({ orderBy: { descricao: "asc" } }),
-    getEmpresa(),
+    getEmpresas(),
   ]);
 
   return (
     <OrcamentoForm
       clientes={clientes}
       produtos={produtos}
-      defaults={{
-        condicaoPagamentoPadrao: empresa.condicaoPagamentoPadrao,
-        prazoEntregaPadrao: empresa.prazoEntregaPadrao,
-        validadeDiasPadrao: empresa.validadeDiasPadrao,
-      }}
+      empresas={empresas.map((e) => ({
+        id: e.id,
+        razaoSocial: e.razaoSocial,
+        nomeFantasia: e.nomeFantasia,
+        condicaoPagamentoPadrao: e.condicaoPagamentoPadrao,
+        prazoEntregaPadrao: e.prazoEntregaPadrao,
+        validadeDiasPadrao: e.validadeDiasPadrao,
+      }))}
     />
   );
 }
