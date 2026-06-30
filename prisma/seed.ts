@@ -68,7 +68,7 @@ async function main() {
     validade.setDate(validade.getDate() + 30);
     await prisma.orcamento.create({
       data: {
-        numero: 113,
+        numero: 1,
         clienteId,
         empresaId: empresa.id,
         condicaoPagamento: "027 - 10 x",
@@ -92,7 +92,7 @@ async function main() {
         },
       },
     });
-    console.log("✓ Orçamento de exemplo Nº 113 criado");
+    console.log("✓ Orçamento de exemplo Nº 1 criado");
   }
 }
 

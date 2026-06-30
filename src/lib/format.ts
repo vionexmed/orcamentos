@@ -38,9 +38,9 @@ export function formatDataHora(data: Date | string): string {
   });
 }
 
-/** Número do orçamento com zero à esquerda: 113 -> "000113" */
+/** Número do orçamento com zero à esquerda: 1 -> "0001", 23 -> "0023" */
 export function formatNumeroOrcamento(numero: number): string {
-  return String(numero).padStart(6, "0");
+  return String(numero).padStart(4, "0");
 }
 
 /**

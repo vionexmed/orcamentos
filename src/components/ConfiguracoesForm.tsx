@@ -439,7 +439,7 @@ export default function ConfiguracoesForm({
           <div className="grid grid-cols-4 divide-x divide-slate-300 border-b border-slate-400">
             <div className="px-2 py-[3px]">
               <div className="text-[7.5px] uppercase tracking-wide text-slate-400">Orçamento Nº</div>
-              <div className="text-base font-extrabold tracking-tight">000113</div>
+              <div className="text-base font-extrabold tracking-tight">0001</div>
             </div>
             <div className="px-2 py-[3px]">
               <div className="text-[7.5px] uppercase tracking-wide text-slate-400">Emissão</div>

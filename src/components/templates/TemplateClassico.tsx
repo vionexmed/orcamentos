@@ -1,4 +1,9 @@
-import { formatData, formatDataHora, formatNumero } from "@/lib/format";
+import {
+  formatData,
+  formatDataHora,
+  formatNumero,
+  formatNumeroOrcamento,
+} from "@/lib/format";
 import { calcularTotais } from "@/lib/orcamento";
 import type { DocumentoProps } from "@/lib/estilos";
 import { estiloLogo } from "@/lib/logo";
@@ -56,7 +61,7 @@ export default function TemplateClassico({ orcamento, empresa }: DocumentoProps)
 
       {/* Número do orçamento */}
       <div className="flex items-center justify-center border-x border-b border-black px-2 py-1 font-bold">
-        Orçamento Nº:&nbsp;&nbsp;&nbsp;&nbsp;{orcamento.numero} de {emissaoCurta(new Date(orcamento.data))}
+        Orçamento Nº:&nbsp;&nbsp;&nbsp;&nbsp;{formatNumeroOrcamento(orcamento.numero)} de {emissaoCurta(new Date(orcamento.data))}
       </div>
 
       {/* Cliente */}
